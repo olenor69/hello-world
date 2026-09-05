@@ -9,19 +9,100 @@
       margin: 0;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 2.5rem;
       background: #0f172a;
       color: #f8fafc;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 2rem 1rem;
+      box-sizing: border-box;
     }
     h1 {
       font-size: 3rem;
       font-weight: 600;
+      margin: 0;
+    }
+    .clocks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 900px;
+    }
+    .clock {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .clock .city {
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+    .clock .time {
+      font-size: 1.4rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .clock .date {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 0.35rem;
     }
   </style>
 </head>
 <body>
   <h1>Hello, World!</h1>
+  <div class="clocks" id="clocks"></div>
+
+  <script>
+    const zones = [
+      { city: 'New York', tz: 'America/New_York' },
+      { city: 'London', tz: 'Europe/London' },
+      { city: 'Paris', tz: 'Europe/Paris' },
+      { city: 'Dubai', tz: 'Asia/Dubai' },
+      { city: 'Delhi', tz: 'Asia/Kolkata' },
+      { city: 'Tokyo', tz: 'Asia/Tokyo' },
+      { city: 'Sydney', tz: 'Australia/Sydney' },
+      { city: 'Los Angeles', tz: 'America/Los_Angeles' },
+    ];
+
+    const container = document.getElementById('clocks');
+    const timeEls = zones.map(zone => {
+      const card = document.createElement('div');
+      card.className = 'clock';
+
+      const city = document.createElement('div');
+      city.className = 'city';
+      city.textContent = zone.city;
+
+      const time = document.createElement('div');
+      time.className = 'time';
+
+      const date = document.createElement('div');
+      date.className = 'date';
+
+      card.append(city, time, date);
+      container.appendChild(card);
+      return { zone, time, date };
+    });
+
+    function update() {
+      const now = new Date();
+      for (const { zone, time, date } of timeEls) {
+        time.textContent = now.toLocaleTimeString('en-US', { timeZone: zone.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        date.textContent = now.toLocaleDateString('en-US', { timeZone: zone.tz, weekday: 'short', month: 'short', day: 'numeric' });
+      }
+    }
+
+    update();
+    setInterval(update, 1000);
+  </script>
 </body>
 </html>
